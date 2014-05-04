@@ -26,3 +26,8 @@ php otrRenamer.php
 have fun!
 
 if you edit the script, please commit it in this repo! thanks :-)
+
+features in development
+=======================
+* delete files after copy in sourcedir
+* decide between movie and series with an array (and in feature maybe with an api request?)
