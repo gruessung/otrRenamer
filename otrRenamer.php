@@ -31,6 +31,20 @@ define("SUBDIR", true);
 //array with file exentions of video files
 $aFileext = array("*.mp4", "*.avi");
 
+//handle tv serias?
+define("SERIE", true);
+
+//Serien DEstdir
+define("DEST_SERIE", "/media/Seagate Expansion Drive/Serien/")
+
+
+//
+
+
+//Array with tv-serials
+$aSerien = array("simpsons", "house");
+
+define("DELETE", true);
 
 /************ do not edit the script above ***********************/
 
@@ -52,6 +66,7 @@ foreach ($aFileext as $ext)
 foreach ($aFiles as $f)
 {
 	$sTitle = "";
+	$serie = false;
 
 	//fetch extension
 	$aExt = explode(".", $f);
@@ -75,27 +90,50 @@ foreach ($aFiles as $f)
 
 	$sTitle = substr($sTitle, 0, -1);
 
+
+	foreach($aSerien as $s)
+	{
+		if (strpos($sTitle, $s) !== false)
+		{
+			$serie = true;
+			$sTitle = $sTitle." - ".$splitDate[2].".".$splitDate[1].".".$splitDate[0];
+		}
+	}
 	echo $sTitle."\n";
 
-	//create folder
-	if (SUBDIR)
+	if ($serie)
 	{
-		@mkdir(DESTDIR.$sTitle);
-		$dest = DESTDIR.$sTitle."/$sTitle.".$ext;
+		echo $sTitle." wird wegen Serie weggelassen!";
 	}
 	else
 	{
-		$dest = DESTDIR.$sTitle.".".$ext;
-	}
+		//create folder
+		if (SUBDIR)
+		{
+			@mkdir(DESTDIR.$sTitle);
+			$dest = DESTDIR.$sTitle."/$sTitle.".$ext;
+		}
+		else
+		{
+			$dest = DESTDIR.$sTitle.".".$ext;
+		}
+	
+		//copy file	
+		if (!file_exists($dest))
+		{
+			
+			exec("mv ".SOURCEDIR.$f." $dest");
+		}
+		else
+		{
+			echo "file already exists: $sTitle.$ext\n";
+		}
+		
+		if (DELETE)
+        	{
+        	        unlink(SOURCEDIR.$f);
+        	}
 
-	//copy file	
-	if (!file_exists($dest))
-	{
-		copy(SOURCEDIR.$f, $dest);
-	}
-	else
-	{
-		echo "file already exists: $sTitle.$ext\n";
 	}
 
 
